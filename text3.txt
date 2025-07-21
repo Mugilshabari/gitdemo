@@ -1,0 +1,6 @@
+this file is for practicing on my own in github
+git clone ==> this will clone the git hub repo
+git status ==> it shows the current status the repo that we cloned
+git add ==> it will add the changes in the repo we made in the staging mode(pre save)
+git commit -m "commit message" ==> this will save the changes we made in the local machine repo we clone 
+git push origin main ===> this will upload the changes in the actual github
