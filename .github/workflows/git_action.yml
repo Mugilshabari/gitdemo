@@ -1,0 +1,30 @@
+name: Post-Merge Deployment
+
+on:
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  deploy:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to Amazon Linux EC2 via SSH
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.AWS_HOST }}
+          username: ${{ secrets.AWS_USER }}
+          key: ${{ secrets.AWS_SSH_KEY }}
+          script: |
+            cd ~/myrepo
+
+            # Save any local changes
+            git stash
+
+            # Pull latest code using SSH URL
+            git pull git@github.com:yourusername/myrepo.git
+
+            # Optional confirmation
+            echo "✅ Repo updated successfully!"
