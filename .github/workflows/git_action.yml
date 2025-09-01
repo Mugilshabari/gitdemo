@@ -1,0 +1,37 @@
+name: Post-Merge Deployment
+
+on:
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  deploy:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to Amazon Linux EC2 via SSH
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.AWS_HOST }}
+          username: ${{ secrets.AWS_USER }}
+          key: ${{ secrets.AWS_SSH_KEY }}
+          script: |
+            cd ~/myrepo
+
+            # Initialize repo if it doesn't exist
+            if [ ! -d ".git" ]; then
+              git init
+              git remote add origin git@github.com:yourusername/myrepo.git
+              git fetch origin
+              git reset --hard origin/main
+            fi
+
+            # Save any local changes
+            git stash || echo "Nothing to stash"
+
+            # Pull latest code
+            git pull origin main
+
+            # Confirmation
+            echo "✅ Repo updated successfully!"
